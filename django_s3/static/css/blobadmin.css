@@ -1,0 +1,20 @@
+.upload-notice {
+  margin-top: 5px;
+  font-style: italic;
+}
+button.upload {
+  font-size: 11px;
+}
+div.progressbar {
+  position: relative;
+  height: 15px;
+  vertical-align: middle;
+  border: 1px solid #ccc;
+  background-color: white;
+  margin: 2px 2px 2px 0;
+}
+div.progress {
+  background-color: #7ca0c7;
+  height: 100%;
+  width: 0;
+}
