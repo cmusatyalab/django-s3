@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name = 'django-s3',
@@ -15,6 +15,10 @@ setup(
             'static/js/libs/*.js',
         ],
     },
+    install_requires = [
+        'Django',
+        'boto',
+    ],
     description = 'Amazon S3 storage for Django',
     license = 'GNU General Public License, version 2',
 )
