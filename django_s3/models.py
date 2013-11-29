@@ -9,17 +9,18 @@ from itertools import count
 import os
 import time
 
-s3_conn = boto.connect_s3(host=settings.S3_HOST, port=settings.S3_PORT,
+s3_conn = boto.connect_s3(host=settings.S3_HOST,
+        port=getattr(settings, 'S3_PORT', None),
         aws_access_key_id=settings.S3_ACCESS_KEY,
         aws_secret_access_key=settings.S3_SECRET_KEY,
-        is_secure=settings.S3_SECURE_CONN,
+        is_secure=getattr(settings, 'S3_SECURE_CONN', True),
         calling_format=boto.s3.connection.OrdinaryCallingFormat())
-if settings.S3_PUBLIC_HOST is not None:
+if getattr(settings, 'S3_PUBLIC_HOST', None):
     s3_public_conn = boto.connect_s3(host=settings.S3_PUBLIC_HOST,
-            port=settings.S3_PUBLIC_PORT,
+            port=getattr(settings, 'S3_PUBLIC_PORT', None),
             aws_access_key_id=settings.S3_ACCESS_KEY,
             aws_secret_access_key=settings.S3_SECRET_KEY,
-            is_secure=settings.S3_PUBLIC_SECURE_CONN,
+            is_secure=getattr(settings, 'S3_PUBLIC_SECURE_CONN', True),
             calling_format=boto.s3.connection.OrdinaryCallingFormat())
 else:
     s3_public_conn = s3_conn
@@ -98,9 +99,9 @@ class Blob(models.Model):
             self.key.open_read(headers=hdrs)
             return self.key
 
-    def make_url(self, content_disposition=None,
-            refresh=settings.S3_SIGNED_URL_REFRESH_INTERVAL,
-            grace=settings.S3_SIGNED_URL_GRACE):
+    def make_url(self, content_disposition=None, refresh=getattr(settings,
+            'S3_SIGNED_URL_REFRESH_INTERVAL', 3600 * 8),
+            grace=getattr(settings, 'S3_SIGNED_URL_GRACE', 300)):
         resp_hdrs = {}
         if content_disposition is not None:
             # Assume the object is being offered for download.  Prioritize

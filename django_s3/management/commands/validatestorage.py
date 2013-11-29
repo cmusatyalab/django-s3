@@ -16,8 +16,8 @@ class Command(NoArgsCommand):
                 continue
             if int(verbosity) > 1:
                 self.stderr.write('Checking: %s\n' % obj)
-            with TemporaryFile(dir=settings.TEMPDIR, prefix='olive-blob-') \
-                    as fh:
+            with TemporaryFile(dir=getattr(settings, 'TEMPDIR', None),
+                    prefix='olive-blob-') as fh:
                 obj.blob.get(fh)
                 fh.seek(0)
                 try:
