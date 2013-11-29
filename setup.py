@@ -18,6 +18,7 @@ setup(
     install_requires = [
         'Django',
         'boto',
+        'python-dateutil',
     ],
     description = 'Amazon S3 storage for Django',
     license = 'GNU General Public License, version 2',
