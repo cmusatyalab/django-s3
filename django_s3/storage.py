@@ -1,11 +1,9 @@
-import base64
 from boto.s3.bucket import Bucket
 from cStringIO import StringIO
 import dateutil.parser
 from django.conf import settings
 from django.core.files import File
 from django.core.files.storage import Storage
-import os
 
 from .models import s3_conn, s3_public_conn
 
@@ -53,11 +51,7 @@ class S3StaticFileStorage(Storage):
         return name
 
     def get_available_name(self, name):
-        while True:
-            unique_name = '%s-%s' % (base64.urlsafe_b64encode(os.urandom(6)),
-                    name)
-            if self._bucket.get_key(unique_name) is None:
-                return unique_name
+        return name
 
     def get_valid_name(self, name):
         return name
