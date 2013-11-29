@@ -10,8 +10,8 @@
 
 ## Optional settings
 
-- `S3_PUBLIC_STORAGE_BUCKET`: the name of the bucket to be used by the
-  `S3PublicStorage` class.
+- `S3_STATICFILES_BUCKET`: the name of the bucket to be used by the
+  `S3StaticFileStorage` class
 - `S3_PORT`: the port number of the S3 endpoint
 - `S3_SECURE_CONN`: whether to use TLS *(default: True)*
 - `S3_PUBLIC_HOST`: the hostname of a separate S3 endpoint to use in signed

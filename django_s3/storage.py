@@ -9,13 +9,13 @@ import os
 
 from .models import s3_conn, s3_public_conn
 
-class S3PublicStorage(Storage):
-    BUCKET_NAME = settings.S3_PUBLIC_STORAGE_BUCKET
+class S3StaticFileStorage(Storage):
+    BUCKET_NAME = settings.S3_STATICFILES_BUCKET
     KEY_POLICY = 'public-read'
     CHUNK_SIZE = 100 << 20
 
     def __init__(self):
-        super(S3PublicStorage, self).__init__()
+        super(S3StaticFileStorage, self).__init__()
         self._bucket = Bucket(connection=s3_conn, name=self.BUCKET_NAME)
         self._bucket_public = Bucket(connection=s3_public_conn,
                 name=self.BUCKET_NAME)
