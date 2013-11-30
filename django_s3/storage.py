@@ -5,6 +5,7 @@ from dateutil.tz import tzlocal
 from django.conf import settings
 from django.core.files import File
 from django.core.files.storage import Storage
+import magic
 
 from .models import s3_conn, s3_public_conn
 
@@ -33,9 +34,19 @@ class S3StaticFileStorage(Storage):
         return File(key)
 
     def _save(self, name, content):
+        if name.endswith('.css'):
+            content_type = 'text/css'
+        elif name.endswith('.js'):
+            content_type = 'application/javascript'
+        elif name.endswith('.json'):
+            content_type = 'application/json'
+        elif hasattr(content.file, 'getvalue'):
+            content_type = magic.from_buffer(content.file.getvalue(),
+                    mime=True)
+        else:
+            content_type = magic.from_file(content.file.name, mime=True)
         hdrs = {
-            'Content-Type': getattr(content, 'content_type',
-                    'application/octet-stream')
+            'Content-Type': content_type,
         }
         if content.size > self.CHUNK_SIZE:
             # Upload in chunks

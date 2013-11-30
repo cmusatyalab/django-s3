@@ -19,6 +19,7 @@ setup(
         'Django',
         'boto',
         'python-dateutil',
+        'python-magic',
     ],
     description = 'Amazon S3 storage for Django',
     license = 'GNU General Public License, version 2',
