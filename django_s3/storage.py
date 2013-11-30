@@ -1,6 +1,7 @@
 from boto.s3.bucket import Bucket
 from cStringIO import StringIO
 import dateutil.parser
+from dateutil.tz import tzlocal
 from django.conf import settings
 from django.core.files import File
 from django.core.files.storage import Storage
@@ -69,7 +70,9 @@ class S3StaticFileStorage(Storage):
 
     def modified_time(self, name):
         key = self._get_key(name)
-        return dateutil.parser.parse(key.last_modified)
+        stamp = dateutil.parser.parse(key.last_modified)
+        # Convert to naive datetime in local time, as FileSystemStorage does
+        return stamp.astimezone(tzlocal()).replace(tzinfo=None)
 
     def size(self, name):
         key = self._get_key(name)
