@@ -38,9 +38,10 @@ STATICFILES_STORAGE = 'django_s3.storage.S3StaticFileStorage'
 
 ## with django_compressor
 
-Also add:
-
 ```python
+S3_STATICFILES_BUCKET = 'bucket-name'
+STATIC_URL = 'https://storage.example.com/bucket-name/'
 STATIC_ROOT = '/path/to/local/sitestatic'
+STATICFILES_STORAGE = 'django_s3.storage.S3CompressedFileStorage'
 COMPRESS_STORAGE = 'django_s3.storage.S3CompressedFileStorage'
 ```
