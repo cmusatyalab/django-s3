@@ -92,3 +92,18 @@ class S3StaticFileStorage(Storage):
     def url(self, name):
         key = self._bucket_public.new_key(name)
         return key.generate_url(0, query_auth=False)
+
+
+class S3CompressedFileStorage(S3StaticFileStorage):
+    '''Storage class that makes a local copy of the files for
+    django_compressor.'''
+
+    def __init__(self, *args, **kwargs):
+        from compressor.storage import CompressorFileStorage
+        super(S3CompressedFileStorage, self).__init__(*args, **kwargs)
+        self._local_storage = CompressorFileStorage()
+
+    def save(self, name, content):
+        name = super(S3CompressedFileStorage, self).save(name, content)
+        self._local_storage._save(name, content)
+        return name
