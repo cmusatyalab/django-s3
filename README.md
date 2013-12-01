@@ -27,3 +27,20 @@
   by default after we are no longer handing it out.  This allows the user
   time to download the file.  *(default: 5 minutes)*
 - `TEMPDIR`: a temporary directory for `manage.py validatestorage`.
+
+# Storing static files in S3
+
+```python
+S3_STATICFILES_BUCKET = 'bucket-name'
+STATIC_URL = 'https://storage.example.com/bucket-name/'
+STATICFILES_STORAGE = 'django_s3.storage.S3StaticFileStorage'
+```
+
+## with django_compressor
+
+Also add:
+
+```python
+STATIC_ROOT = '/path/to/local/sitestatic'
+COMPRESS_STORAGE = 'django_s3.storage.S3CompressedFileStorage'
+```
