@@ -1,4 +1,5 @@
 from boto.s3.bucket import Bucket
+from boto.s3.cors import CORSConfiguration
 from cStringIO import StringIO
 import dateutil.parser
 from dateutil.tz import tzlocal
@@ -19,6 +20,18 @@ class S3StaticFileStorage(Storage):
         self._bucket = Bucket(connection=s3_conn, name=self.BUCKET_NAME)
         self._bucket_public = Bucket(connection=s3_public_conn,
                 name=self.BUCKET_NAME)
+
+        # Allow CORS access from this app (for web fonts)
+        self._bucket.set_cors(self._get_cors_config())
+
+    def _get_cors_config(self):
+        origins = []
+        for host in settings.ALLOWED_HOSTS:
+            for scheme in ('http', 'https'):
+                origins.append('%s://%s' % (scheme, host))
+        cors = CORSConfiguration()
+        cors.add_rule(['GET'], origins)
+        return cors
 
     def _get_key(self, name):
         key = self._bucket.get_key(name)
