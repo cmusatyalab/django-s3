@@ -2,6 +2,8 @@
 
 ## Required settings
 
+If using the models, add `django_s3` to `INSTALLED_APPS`.
+
 - `S3_HOST`: the hostname of the S3 endpoint
 - `S3_ACCESS_KEY`: the access key ID
 - `S3_SECRET_KEY`: the secret access key
@@ -29,6 +31,9 @@
 - `TEMPDIR`: a temporary directory for `manage.py validatestorage`.
 
 # Storing static files in S3
+
+If you're only using the static file support, you don't need to add
+`django_s3` to `INSTALLED_APPS`.
 
 ```python
 S3_STATICFILES_BUCKET = 'bucket-name'
