@@ -41,16 +41,12 @@ class S3StaticFileStorage(Storage):
         if s3_conn.lookup(self.BUCKET_NAME) is None:
             s3_conn.create_bucket(self.BUCKET_NAME, policy='public-read')
 
-        # Allow CORS access from this app (for web fonts)
+        # Allow CORS access (for web fonts)
         self._bucket.set_cors(self._get_cors_config())
 
     def _get_cors_config(self):
-        origins = []
-        for host in settings.ALLOWED_HOSTS:
-            for scheme in ('http', 'https'):
-                origins.append('%s://%s' % (scheme, host))
         cors = CORSConfiguration()
-        cors.add_rule(['GET'], origins)
+        cors.add_rule(['GET'], ['*'])
         return cors
 
     def _get_key(self, name):
