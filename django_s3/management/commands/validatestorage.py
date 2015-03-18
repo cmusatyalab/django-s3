@@ -16,11 +16,10 @@
 # 02110-1301, USA.
 #
 
-from django.conf import settings
 from django.core.management.base import NoArgsCommand, CommandError
-from tempfile import TemporaryFile
+from hashlib import sha256
 
-from ...models import Blob, DataCorruption
+from ...models import Blob
 
 class Command(NoArgsCommand):
     help = 'Validate integrity of stored objects'
@@ -32,19 +31,31 @@ class Command(NoArgsCommand):
                 continue
             if int(verbosity) > 1:
                 self.stderr.write('Checking: %s\n' % blob)
-            with TemporaryFile(dir=getattr(settings, 'TEMPDIR', None),
-                    prefix='olive-blob-') as fh:
-                blob.get(fh)
-                fh.seek(0)
-                try:
-                    blob.check_sha256(fh)
-                except ValueError:
-                    # SHA-256 not set; set it
-                    blob.set_sha256(fh)
-                except DataCorruption, e:
-                    self.stdout.write('Integrity check failed: %s\n' % blob)
-                    self.stdout.write('  Expected : %s\n' % e.expected)
-                    self.stdout.write('  Found    : %s\n' % e.found)
-                    failed += 1
+
+            key = blob.get()
+            try:
+                hash = sha256()
+                while True:
+                    buf = key.read(1 << 20)
+                    if not buf: break
+                    hash.update(buf)
+                found = hash.hexdigest()
+            except Exception:
+                key.close(fast=True)
+                raise
+            else:
+                key.close()
+
+            if not blob.sha256:
+                self.stdout.write('Replacing missing checksum: %s\n' % blob)
+                blob.sha256 = found
+                blob.save()
+
+            elif blob.sha256 != found:
+                self.stdout.write('Integrity check failed: %s\n' % blob)
+                self.stdout.write('  Expected : %s\n' % blob.sha256)
+                self.stdout.write('  Found    : %s\n' % found)
+                failed += 1
+
         if failed:
             raise CommandError('%d objects failed validation' % failed)
