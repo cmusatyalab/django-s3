@@ -85,7 +85,7 @@ class Blob(models.Model):
     sha256 = models.CharField(verbose_name='SHA-256', max_length=64,
             blank=True)
     upload_id = models.CharField(max_length=100, blank=True)
-    complete = models.BooleanField()
+    complete = models.BooleanField(default=False)
 
     def __unicode__(self):
         return '%s/%s (%s)' % (self.container, self.name,
